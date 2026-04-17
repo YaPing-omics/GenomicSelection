@@ -30,7 +30,7 @@ h2_vec <- c(0.7, 0.5, 0.3)
 
 corr_scenarios <- c(0.1, 0.3, 0.5)
 
-nrep <- 10
+nrep <- 100
 kfold <- 5
 cv_reps <- 3
 causal_prop <- 0.1
@@ -491,35 +491,42 @@ summarize_accuracy <- function(acc_df) {
 
 plot_accuracy_boxplots <- function(acc_df, outdir = "simulation_results") {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
-
+  
+  # ensure accuracy is within bounds
+  acc_df <- acc_df[is.finite(accuracy) & !is.na(accuracy)]
+  
+  # ---- Plot 1: by trait ----
   p1 <- ggplot(acc_df, aes(x = scenario, y = accuracy, fill = method)) +
     geom_boxplot(alpha = 0.8, outlier.shape = 16) +
-    facet_wrap(~ trait, scales = "free_y") +
+    facet_wrap(~ trait) +
     scale_fill_manual(values = olive_fill) +
+    coord_cartesian(ylim = c(0, 1)) +   # 👈 FIXED Y LIMIT
     theme_bw(base_size = 12) +
     labs(
       title = "GS accuracy across correlation scenarios",
       x = "Genetic correlation scenario",
       y = "Prediction accuracy"
     )
-
+  
   ggsave(file.path(outdir, "Boxplot_accuracy_by_trait.png"),
          p1, width = 10, height = 6, dpi = 300)
-
+  
+  # ---- Plot 2: ST vs MT ----
   p2 <- ggplot(acc_df, aes(x = method, y = accuracy, fill = method)) +
     geom_boxplot(alpha = 0.8, outlier.shape = 16) +
-    facet_grid(trait ~ scenario, scales = "free_y") +
+    facet_grid(trait ~ scenario) +
     scale_fill_manual(values = olive_fill) +
+    coord_cartesian(ylim = c(0, 1)) +   # 👈 FIXED Y LIMIT
     theme_bw(base_size = 12) +
     labs(
       title = "Single-trait vs Multi-trait GS accuracy",
       x = "Method",
       y = "Prediction accuracy"
     )
-
+  
   ggsave(file.path(outdir, "Boxplot_ST_vs_MT_by_scenario.png"),
          p2, width = 11, height = 7, dpi = 300)
-
+  
   list(p1 = p1, p2 = p2)
 }
 
