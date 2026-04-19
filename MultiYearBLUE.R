@@ -1,5 +1,4 @@
 rm(list=ls())
-setwd('C:/Users/ya-ping.lin/Documents/IMIN_GS/GS/MultiENV/India/')
 
 library(lme4)
 library(emmeans)
