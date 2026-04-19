@@ -31,7 +31,7 @@ run_multitrait_marker_number_experiment(
   id_col = "id",
   marker_numbers = c(5000),
   base_outdir = "GS_multitrait",
-  marker_reps = 10,
+  marker_reps = 50,
   k = 5,
   reps = 3,
   seed = 123,
